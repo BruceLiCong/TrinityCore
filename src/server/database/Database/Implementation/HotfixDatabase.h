@@ -21,19 +21,6 @@
 #include "DatabaseWorkerPool.h"
 #include "MySQLConnection.h"
 
-class HotfixDatabaseConnection : public MySQLConnection
-{
-    public:
-        //- Constructors for sync and async connections
-        HotfixDatabaseConnection(MySQLConnectionInfo& connInfo) : MySQLConnection(connInfo) { }
-        HotfixDatabaseConnection(ProducerConsumerQueue<SQLOperation*>* q, MySQLConnectionInfo& connInfo) : MySQLConnection(q, connInfo) { }
-
-        //- Loads database type specific prepared statements
-        void DoPrepareStatements() override;
-};
-
-typedef DatabaseWorkerPool<HotfixDatabaseConnection> HotfixDatabaseWorkerPool;
-
 enum HotfixDatabaseStatements
 {
     /*  Naming standard for defines:
@@ -41,6 +28,9 @@ enum HotfixDatabaseStatements
         When updating more than one field, consider looking at the calling function
         name for a suiting suffix.
     */
+
+    HOTFIX_SEL_ACHIEVEMENT,
+    HOTFIX_SEL_ACHIEVEMENT_LOCALE,
 
     HOTFIX_SEL_AREA_GROUP,
 
@@ -51,6 +41,15 @@ enum HotfixDatabaseStatements
 
     HOTFIX_SEL_BARBER_SHOP_STYLE,
     HOTFIX_SEL_BARBER_SHOP_STYLE_LOCALE,
+
+    HOTFIX_SEL_BATTLE_PET_BREED_QUALITY,
+
+    HOTFIX_SEL_BATTLE_PET_BREED_STATE,
+
+    HOTFIX_SEL_BATTLE_PET_SPECIES,
+    HOTFIX_SEL_BATTLE_PET_SPECIES_LOCALE,
+
+    HOTFIX_SEL_BATTLE_PET_SPECIES_STATE,
 
     HOTFIX_SEL_BROADCAST_TEXT,
     HOTFIX_SEL_BROADCAST_TEXT_LOCALE,
@@ -66,6 +65,11 @@ enum HotfixDatabaseStatements
 
     HOTFIX_SEL_CREATURE_TYPE,
     HOTFIX_SEL_CREATURE_TYPE_LOCALE,
+
+    HOTFIX_SEL_CRITERIA,
+
+    HOTFIX_SEL_CRITERIA_TREE,
+    HOTFIX_SEL_CRITERIA_TREE_LOCALE,
 
     HOTFIX_SEL_CURRENCY_TYPES,
     HOTFIX_SEL_CURRENCY_TYPES_LOCALE,
@@ -164,12 +168,16 @@ enum HotfixDatabaseStatements
 
     HOTFIX_SEL_ITEM_SPEC_OVERRIDE,
 
+    HOTFIX_SEL_ITEM_TO_BATTLE_PET_SPECIES,
+
     HOTFIX_SEL_ITEM_X_BONUS_TREE,
 
     HOTFIX_SEL_KEY_CHAIN,
 
     HOTFIX_SEL_MAIL_TEMPLATE,
     HOTFIX_SEL_MAIL_TEMPLATE_LOCALE,
+
+    HOTFIX_SEL_MODIFIER_TREE,
 
     HOTFIX_SEL_MOUNT,
     HOTFIX_SEL_MOUNT_LOCALE,
@@ -180,6 +188,12 @@ enum HotfixDatabaseStatements
 
     HOTFIX_SEL_NAME_GEN,
     HOTFIX_SEL_NAME_GEN_LOCALE,
+
+    HOTFIX_SEL_NAMES_PROFANITY,
+
+    HOTFIX_SEL_NAMES_RESERVED,
+
+    HOTFIX_SEL_NAMES_RESERVED_LOCALE,
 
     HOTFIX_SEL_OVERRIDE_SPELL_DATA,
 
@@ -247,6 +261,9 @@ enum HotfixDatabaseStatements
     HOTFIX_SEL_TOTEM_CATEGORY,
     HOTFIX_SEL_TOTEM_CATEGORY_LOCALE,
 
+    HOTFIX_SEL_TOY,
+    HOTFIX_SEL_TOY_LOCALE,
+
     HOTFIX_SEL_TRANSPORT_ANIMATION,
 
     HOTFIX_SEL_TRANSPORT_ROTATION,
@@ -259,5 +276,20 @@ enum HotfixDatabaseStatements
 
     MAX_HOTFIXDATABASE_STATEMENTS
 };
+
+class HotfixDatabaseConnection : public MySQLConnection
+{
+public:
+    typedef HotfixDatabaseStatements Statements;
+
+    //- Constructors for sync and async connections
+    HotfixDatabaseConnection(MySQLConnectionInfo& connInfo) : MySQLConnection(connInfo) { }
+    HotfixDatabaseConnection(ProducerConsumerQueue<SQLOperation*>* q, MySQLConnectionInfo& connInfo) : MySQLConnection(q, connInfo) { }
+
+    //- Loads database type specific prepared statements
+    void DoPrepareStatements() override;
+};
+
+typedef DatabaseWorkerPool<HotfixDatabaseConnection> HotfixDatabaseWorkerPool;
 
 #endif

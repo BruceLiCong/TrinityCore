@@ -168,6 +168,56 @@ LOCK TABLES `autobroadcast` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `battle_pets`
+--
+
+DROP TABLE IF EXISTS `battle_pets`;
+CREATE TABLE `battle_pets` (
+  `guid` bigint(20) NOT NULL,
+  `battlenetAccountId` int(10) NOT NULL,
+  `species` int(10) NOT NULL,
+  `breed` smallint(5) NOT NULL,
+  `level` smallint(5) NOT NULL DEFAULT '1',
+  `exp` smallint(5) NOT NULL DEFAULT '0',
+  `health` int(10) NOT NULL DEFAULT '1',
+  `quality` tinyint(3) NOT NULL DEFAULT '0',
+  `flags` smallint(5) NOT NULL DEFAULT '0',
+  `name` varchar(12) NOT NULL,
+  PRIMARY KEY (`guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `battle_pets`
+--
+
+LOCK TABLES `battle_pets` WRITE;
+/*!40000 ALTER TABLE `battle_pets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `battle_pets` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `battle_pet_slots`
+--
+
+DROP TABLE IF EXISTS `battle_pet_slots`;
+CREATE TABLE `battle_pet_slots` (
+  `id` tinyint(3) NOT NULL,
+  `battlenetAccountId` int(10) NOT NULL,
+  `battlePetGuid` bigint(20) NOT NULL,
+  `locked` tinyint(3) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`,`battlenetAccountId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `battle_pet_slots`
+--
+
+LOCK TABLES `battle_pet_slots` WRITE;
+/*!40000 ALTER TABLE `battle_pet_slots` DISABLE KEYS */;
+/*!40000 ALTER TABLE `battle_pet_slots` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `battlenet_account_bans`
 --
 
@@ -191,6 +241,30 @@ CREATE TABLE `battlenet_account_bans` (
 LOCK TABLES `battlenet_account_bans` WRITE;
 /*!40000 ALTER TABLE `battlenet_account_bans` DISABLE KEYS */;
 /*!40000 ALTER TABLE `battlenet_account_bans` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `battlenet_account_toys`
+--
+
+DROP TABLE IF EXISTS `battlenet_account_toys`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `battlenet_account_toys` (
+  `accountId` int(10) unsigned NOT NULL,
+  `itemId` int(11) NOT NULL DEFAULT '0',
+  `isFavourite` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`accountId`,`itemId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `battlenet_account_toys`
+--
+
+LOCK TABLES `battlenet_account_toys` WRITE;
+/*!40000 ALTER TABLE `battlenet_account_toys` DISABLE KEYS */;
+/*!40000 ALTER TABLE `battlenet_account_toys` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -251,7 +325,7 @@ CREATE TABLE `battlenet_components` (
 
 LOCK TABLES `battlenet_components` WRITE;
 /*!40000 ALTER TABLE `battlenet_components` DISABLE KEYS */;
-INSERT INTO `battlenet_components` VALUES ('Bnet','Mc64',37165),('Bnet','Win',37165),('Bnet','Wn64',37165),('WoW','base',20182),('WoW','deDE',0),('WoW','enCN',0),('WoW','enGB',0),('WoW','enTW',0),('WoW','enUS',0),('WoW','esES',0),('WoW','esMX',0),('WoW','frFR',0),('WoW','itIT',0),('WoW','koKR',0),('WoW','Mc64',20338),('WoW','ptBR',0),('WoW','ptPT',0),('WoW','ruRU',0),('WoW','Win',20338),('WoW','Wn64',20338),('WoW','zhCN',0),('WoW','zhTW',0);
+INSERT INTO `battlenet_components` VALUES ('Bnet','Mc64',37165),('Bnet','Win',37165),('Bnet','Wn64',37165),('WoW','base',20444),('WoW','deDE',0),('WoW','enCN',0),('WoW','enGB',0),('WoW','enTW',0),('WoW','enUS',0),('WoW','esES',0),('WoW','esMX',0),('WoW','frFR',0),('WoW','itIT',0),('WoW','koKR',0),('WoW','Mc64',20444),('WoW','ptBR',0),('WoW','ptPT',0),('WoW','ruRU',0),('WoW','Win',20444),('WoW','Wn64',20444),('WoW','zhCN',0),('WoW','zhTW',0);
 /*!40000 ALTER TABLE `battlenet_components` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -581,7 +655,7 @@ CREATE TABLE `realmlist` (
 
 LOCK TABLES `realmlist` WRITE;
 /*!40000 ALTER TABLE `realmlist` DISABLE KEYS */;
-INSERT INTO `realmlist` VALUES (1,'Trinity','127.0.0.1','127.0.0.1','255.255.255.0',8085,0,2,1,0,0,20182,2,1);
+INSERT INTO `realmlist` VALUES (1,'Trinity','127.0.0.1','127.0.0.1','255.255.255.0',8085,0,2,1,0,0,20444,2,1);
 /*!40000 ALTER TABLE `realmlist` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -671,4 +745,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-07-13 23:49:27
+-- Dump completed on 2015-08-25 22:49:45

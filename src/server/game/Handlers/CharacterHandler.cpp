@@ -22,6 +22,7 @@
 #include "AuthenticationPackets.h"
 #include "Battleground.h"
 #include "BattlenetServerManager.h"
+#include "BattlePetPackets.h"
 #include "CalendarMgr.h"
 #include "CharacterPackets.h"
 #include "Chat.h"
@@ -458,7 +459,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPackets::Character::CreateCharact
     }
 
     // check name limitations
-    ResponseCodes res = ObjectMgr::CheckPlayerName(charCreate.CreateInfo->Name, true);
+    ResponseCodes res = ObjectMgr::CheckPlayerName(charCreate.CreateInfo->Name, GetSessionDbcLocale(), true);
     if (res != CHAR_NAME_SUCCESS)
     {
         SendCharCreate(res);
@@ -524,14 +525,11 @@ void WorldSession::HandleCharCreateCallback(PreparedQueryResult result, WorldPac
         }
         case 1:
         {
-            uint16 acctCharCount = 0;
+            uint64 acctCharCount = 0;
             if (result)
             {
                 Field* fields = result->Fetch();
-                // SELECT SUM(x) is MYSQL_TYPE_NEWDECIMAL - needs to be read as string
-                const char* ch = fields[0].GetCString();
-                if (ch)
-                    acctCharCount = atoi(ch);
+                acctCharCount = uint64(fields[0].GetDouble());
             }
 
             if (acctCharCount >= sWorld->getIntConfig(CONFIG_CHARACTERS_PER_ACCOUNT))
@@ -985,6 +983,10 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     hotfixInfo.Hotfixes = sDB2Manager.GetHotfixData();
     SendPacket(hotfixInfo.Write());
 
+    // TODO: Move this to BattlePetMgr::SendJournalLock() just to have all packets in one file
+    WorldPackets::BattlePet::BattlePetJournalLockAcquired lock;
+    SendPacket(lock.Write());
+
     pCurrChar->SendInitialPacketsBeforeAddToMap();
 
     //Show cinematic at the first time that player login
@@ -1271,7 +1273,7 @@ void WorldSession::HandleCharRenameOpcode(WorldPackets::Character::CharacterRena
         return;
     }
 
-    ResponseCodes res = ObjectMgr::CheckPlayerName(request.RenameInfo->NewName, true);
+    ResponseCodes res = ObjectMgr::CheckPlayerName(request.RenameInfo->NewName, GetSessionDbcLocale(), true);
     if (res != CHAR_NAME_SUCCESS)
     {
         SendCharRename(res, request.RenameInfo.get());
@@ -1567,7 +1569,7 @@ void WorldSession::HandleCharCustomizeCallback(PreparedQueryResult result, World
         return;
     }
 
-    ResponseCodes res = ObjectMgr::CheckPlayerName(customizeInfo->CharName, true);
+    ResponseCodes res = ObjectMgr::CheckPlayerName(customizeInfo->CharName, GetSessionDbcLocale(), true);
     if (res != CHAR_NAME_SUCCESS)
     {
         SendCharCustomize(res, customizeInfo);
@@ -1811,7 +1813,7 @@ void WorldSession::HandleCharRaceOrFactionChangeCallback(PreparedQueryResult res
         return;
     }
 
-    ResponseCodes res = ObjectMgr::CheckPlayerName(factionChangeInfo->Name, true);
+    ResponseCodes res = ObjectMgr::CheckPlayerName(factionChangeInfo->Name, GetSessionDbcLocale(), true);
     if (res != CHAR_NAME_SUCCESS)
     {
         SendCharFactionChange(res, factionChangeInfo);
